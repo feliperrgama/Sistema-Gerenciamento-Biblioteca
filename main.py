@@ -21,6 +21,7 @@ def switch_case(opc):
             #esperando a tela de ergistros ser feita
             print('Esperando a tela de Registros ser feita...')
         case _:
+            print('Opção inválida!\nTente outra vez...')
             main_menu()
             opc = 0
     

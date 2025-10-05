@@ -1,15 +1,28 @@
 import mysql.connector
-import getpass
 
 def db_connection():
     try:
-        with mysql.connector.connect(
+        conexao = mysql.connector.connect(
             host="localhost",
-            user="felipe",
-            password="1234",
-            database="Biblioteca"
-        ) as connection:
-            print('Esperando o que irá fazer aqui...')
+            user="root",        
+            password="Mavaba123456@",
+            database="biblioteca20"
+        )
 
-    except:
-        print('erro')
+        if conexao.is_connected():
+            print("Conectado com sucesso!")
+            return conexao
+
+    except mysql.connector.Error as err:
+        print(f"Erro ao conectar: {err}")
+        return None
+
+if __name__=="__main__":
+    conexao = db_connection()
+    if conexao:
+        print("Teste concluído – conexão funcionando.")
+        conexao.close()
+    else:
+        print("Falha na conexão.")
+
+   

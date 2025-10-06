@@ -10,7 +10,6 @@ def main_menu():
     print('===== Welcome to the SGB =====')
     print('< 1 > Login')
     print('< 2 > Cadastro')
-    print('< 3 > ')
     opc = int(input('-> [ ]\b\b'))
     return opc
 

@@ -84,12 +84,20 @@ def responseRequests():
             database="Biblioteca"
         ) as connector:
             select_solicitacoes_query = """
-            select * from Solicitacao;
+            select 
+                s.id,
+                u.id_user,
+                u._name,
+                l.id_book,
+                l.title
+            from Solicitacao s
+            join Usuario u on s.id_user = u.id_user
+            join Livro l on s.id_book = l.id_book
             """
             with connector.cursor() as cursor:
                 cursor.execute(select_solicitacoes_query)
                 result = cursor.fetchall()
-
+                
                 dados = []
                 for row in result:
                     tupla = list(row)
@@ -97,7 +105,7 @@ def responseRequests():
 
                 connector.commit()
 
-                headers = ["ID", "Usuário", "Livro"]
+                headers = ["ID", "ID Usuário", "Usuário","ID Livro", "Livro"]
 
                 if not dados:
                     print('Não há solicitações feitas!')
@@ -131,10 +139,10 @@ def responseRequests():
                         insert into Guarda (id_user, id_book)
                         values (%s, %s)
                         """
-                        values = [tupla[1], tupla[2]]
+                        values = [tupla[1], tupla[3]]
                         cursor.execute(insert_guarda_query, values)
 
-                        id_book_tupla = (tupla[2],)
+                        id_book_tupla = (tupla[3],)
                         update_collum_status_livro_query = """
                         update Livro set _status = 2 where id_book = %s
                         """
@@ -153,7 +161,7 @@ def responseRequests():
                         loadingAnimation()
 
                         system('clear')
-                        resp = input('\n\nDeseja realizar responder outra solicitação? (s/n): ')
+                        resp = input('Deseja realizar responder outra solicitação? (s/n): ')
 
                         if resp == 's' or resp == 'S':
                             system('clear')

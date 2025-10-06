@@ -1,4 +1,6 @@
 import mysql.connector
+from login_page import login
+from loadgin_animation import loadingAnimation
 
 DB_CONFIG = {
     "host": "localhost",
@@ -22,6 +24,8 @@ def salvar_usuario(nome, email, senha, perfil):
         cursor.close()
         conn.close()
         print(f"✅ Usuário {nome} cadastrado como {perfil}!")
+        loadingAnimation()
+        login()
     except mysql.connector.Error as err:
         print(f"❌ Erro: {err}")
 

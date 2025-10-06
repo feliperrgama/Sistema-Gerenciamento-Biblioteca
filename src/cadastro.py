@@ -1,12 +1,13 @@
 import mysql.connector
-from login_page import login
-from loadgin_animation import loadingAnimation
+from src.login_page import login
+from src.loadgin_animation import loadingAnimation
+from os import system
 
 DB_CONFIG = {
     "host": "localhost",
-    "user": "root",
+    "user": "felipe",
     "password": "1234",
-    "database": "Biblioteca20"
+    "database": "Biblioteca"
 }
 
 def salvar_usuario(nome, email, senha, perfil):
@@ -28,8 +29,11 @@ def salvar_usuario(nome, email, senha, perfil):
         login()
     except mysql.connector.Error as err:
         print(f"❌ Erro: {err}")
+    
+    pass
 
 def cadastro_terminal():
+    system('clear')
     nome = input("Nome completo: ").strip()
     email = input("E-mail: ").strip()
     senha = input("Senha: ").strip()
@@ -38,6 +42,8 @@ def cadastro_terminal():
         print("❌ Campos inválidos!")
         return
     salvar_usuario(nome, email, senha, perfil)
+
+    pass
 
 if __name__ == "__main__":
     cadastro_terminal()

@@ -1,34 +1,36 @@
 #Menu principal content
 
 from src.login_page import login
-# from src.register_page import ...
-from src.loading_animation import loadingAnimation
+from src.loadgin_animation import loadingAnimation
 from os import system
+from src.cadastro import cadastro_terminal, salvar_usuario
+import src.home_page_adm
+import src.home_page_aluno
+import src.home_page_professor
+import src.db_connection
+from src.linha_function import linha
 
 def main_menu():
     system('clear')
     print('===== Welcome to the SGB =====')
+    linha(50, '-')
     print('< 1 > Login')
     print('< 2 > Cadastro')
-    print('< 3 > doidura')
     opc = int(input('-> [ ]\b\b'))
     return opc
 
 def switch_case(opc):
     match opc:
         case 1:
-            #esperando a página de login ser feita
             system('clear')
             print('Message: Indo para a tela de login...')
             loadingAnimation()
-            print('Esperando a tela de login ser feita...')
             login()
         case 2:
-            #esperando a tela de ergistros ser feita
             system('clear')
             print('Message: Indo para a tela de cadastro...')
             loadingAnimation()
-            print('Esperando a tela de Registros ser feita...')
+            cadastro_terminal()
         case _:
             system('clear')
             print('Message: Opção inválida! Tente outra vez...')

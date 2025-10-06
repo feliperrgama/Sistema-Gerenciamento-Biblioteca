@@ -1,181 +1,267 @@
-import mysql.connector
-import time
+from mysql.connector import connect, Error
+from time import sleep
+from os import system
+from src.loadgin_animation import loadingAnimation
+from tabulate import tabulate
+from src.linha_function import linha
 
 # ==========================================
 #  Função 1 – Solicitar livro
 # ==========================================
-def solicitar_livro(usuario_logado):
-    print("\n=== SOLICITAR LIVRO ===")
+def solicitar_livro(usuario_logado, user):
+    system('clear')
+    print("\n===== SOLICITAR LIVRO =====")
+    linha(60, '-')
 
-    conexao = mysql.connector.connect(
-        host="",
-        user="",
-        password="",  
-        database=""
-    )
-    cursor = conexao.cursor(dictionary=True)
+    try:
+        with connect(
+            host="localhost",
+            user="felipe",
+            password="1234",
+            database="Biblioteca"
+        ) as conexao:
+            with conexao.cursor() as cursor:
+                
+                # Mostra os livros disponíveis
+                sql_select_livro = """
+                select id_book, title, autor from Livro where _status = 1
+                """
+                cursor.execute(sql_select_livro)
+                livros = cursor.fetchall()
 
-    # Mostra livros disponíveis
-    cursor.execute("SELECT id_livro, titulo, autor FROM Livro WHERE status = 'Disponível';")
-    livros = cursor.fetchall()
+                dados = []
+                for row in livros:
+                    lista = list(row)
+                    dados.append(lista)
 
-    if not livros:
-        print("Nenhum livro disponível para empréstimo.")
-    else:
-        print("\nLivros disponíveis:")
-        for livro in livros:
-            print(f"{livro['id_livro']} - {livro['titulo']} ({livro['autor']})")
+                headers = ["ID", "Título", "Autor"]
 
-        try:
-            id_escolhido = int(input("\nDigite o ID do livro que deseja solicitar: "))
+                if not livros:
+                    print("Nenhum livro disponível para empréstimo.")
+                    sleep(1)
+                    loadingAnimation()
+                    system('clear')
+                    print('Message: Voltando para a home page...')
+                    loadingAnimation()
+                    home_professor(user)
+                else:
+                    print("\nLivros disponíveis:")
+                    print(tabulate(dados, headers=headers, tablefmt="fancy_grid"))
 
-            # Verifica se o ID é válido
-            cursor.execute("SELECT * FROM Livro WHERE id_livro = %s AND status = 'Disponível';", (id_escolhido,))
-            livro = cursor.fetchone()
+                    id_escolhido = int(input("\nDigite o ID do livro que deseja solicitar: "))
+                    tupla_to_solicitation = (user, id_escolhido)
+                    verification = """
+                    select id_book, title, autor, publish_age from Livro where id_book = %s and _status = 1
+                    """
+                    # Verifica se o ID é válido e o livro está disponível
+                    cursor.execute(verification, (id_escolhido,))
+                    livro = cursor.fetchall()
+                    data = []
+                    for row1 in livro:
+                        lista1 = list(row1)
+                        data.append(lista1)
 
-            if livro:
-                # Marca o livro como emprestado
-                cursor.execute("UPDATE Livro SET status = 'Indisponível' WHERE id_livro = %s;", (id_escolhido,))
-                cursor.execute("INSERT INTO Emprestimo (id_livro, id_user) VALUES (%s, %s);",
-                               (id_escolhido, usuario_logado["id_user"]))
-                conexao.commit()
-                print(f"\n📖 Você solicitou o livro: {livro['titulo']}")
-            else:
-                print("ID inválido ou livro não disponível.")
+                    headers1 = ["ID", "Título", "Autor", "Ano de Publicação"]
 
-        except ValueError:
-            print("Entrada inválida. Digite apenas números.")
+                    loadingAnimation()
 
-    cursor.close()
-    conexao.close()
-    time.sleep(2)
+                    system('clear')
+                    print(tabulate(data, headers=headers1, tablefmt="fancy_grid"))
+                    opc = input('Deseja solicitar este livro? (s/n): ')
 
+
+                    if opc == 's' or opc == 'S':
+                        system('clear')
+                        # Atualiza o status do livro e registra o empréstimo
+                        solicitar_emprestimo = """
+                        insert into Solicitacao (id_user, id_book) values (%s, %s)
+                        """
+                        cursor.execute(solicitar_emprestimo, tupla_to_solicitation)
+                        conexao.commit()
+                        print('Message: Solicitação enviada com sucesso!')
+                        sleep(1)
+                        loadingAnimation()
+                        system('clear')
+                        print('Message: Voltando para a home page...')
+                        loadingAnimation()
+                        home_professor(user)
+                    else:
+                        system('clear')
+                        print("Message: ID inválido ou livro não disponível. Tente outra vez...")
+                        loadingAnimation()
+                        home_professor(user)
+    except Error as e:
+        print(f'Detalhes do erro:\n{e}\n\n')
 
 # ==========================================
 #  Função 2 – Ver lista de livros disponíveis
 # ==========================================
-def ver_livros_disponiveis(usuario_logado):
+def ver_livros_disponiveis(usuario_logado, user):
+    system('clear')
     print("\n=== LISTA DE LIVROS DISPONÍVEIS ===")
 
-    conexao = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="sua_senha",
-        database="Biblioteca20"
-    )
-    cursor = conexao.cursor(dictionary=True)
+    try:
+        with connect(
+            host="localhost",
+            user="felipe",
+            password="1234",
+            database="Biblioteca"
+        ) as conexao:
+            with conexao.cursor() as cursor:
+                select_lista_query = """
+                select id_book, title, autor, publish_age FROM Livro WHERE _status = 1
+                """
+                cursor.execute(select_lista_query)
+                livros = cursor.fetchall()
 
-    cursor.execute("SELECT titulo, autor, ano, categoria FROM Livro WHERE status = 'Disponível';")
-    livros = cursor.fetchall()
+                dados = []
+                for row in livros:
+                    lista = list(row)
+                    dados.append(lista)
 
-    if not livros:
-        print("Nenhum livro disponível.")
-    else:
-        print(f"\n{'Título':<35} {'Autor':<25} {'Ano':<6} {'Categoria':<20}")
-        print("-" * 90)
-        for livro in livros:
-            print(f"{livro['titulo']:<35} {livro['autor']:<25} {livro['ano']:<6} {livro['categoria']:<20}")
+                conexao.commit()
 
-    cursor.close()
-    conexao.close()
-    input("\nPressione ENTER para voltar ao menu...")
+                headers = ["ID", "Título", "Autor", "Ano de Publicação"]
+
+                if not livros:
+                    print("Nenhum livro disponível no momento.")
+                    sleep(1)
+                    loadingAnimation()
+                    home_professor(user)
+                else:
+                    # print(f"\n{'Título':<35} {'Autor':<25} {'Ano':<6} {'Categoria':<20}")
+                    # print("-" * 90)
+                    # for livro in livros:
+                    #     print(f"{livro['titulo']:<35} {livro['autor']:<25} {livro['ano']:<6} {livro['categoria']:<20}")
+                    print(tabulate(dados, headers=headers, tablefmt="fancy_grid"))
+
+                input("\nPressione ENTER para voltar ao menu...")
+                home_professor(user)
+    except Error as e:
+        print(f'Detalhes do erro com o banco:\n{e}\n\n')
+
 
 
 # ==========================================
 #  Função 3 – Devolver livro
 # ==========================================
-def devolver_livro(usuario_logado):
-    print("\n=== DEVOLVER LIVRO ===")
+def devolver_livro(usuario_logado, user):
+    id_user_tupla = (user,)
 
-    conexao = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="sua_senha",
-        database="Biblioteca20"
-    )
-    cursor = conexao.cursor(dictionary=True)
+    system('clear') 
+    print('===== DEVOLVER LIVRO =====')
+    linha(50, '-')
+    print('Seu(s) livro(s)')
+    try:
+        with connect(
+            host="localhost",
+            port=3306,
+            username="felipe",
+            password="1234",
+            database="Biblioteca"
+        ) as connector:
+            select_table_guarda_query = """
+            select 
+                g.id,
+                u.id_user,
+                u._name,
+                l.id_book,
+                l.title
+            from Guarda g
+            join Usuario u on g.id_user = u.id_user
+            join Livro l on g.id_book = l.id_book
+            where u.id_user = %s
+            """
+            with connector.cursor() as cursor:
+                cursor.execute(select_table_guarda_query, id_user_tupla)
+                result = cursor.fetchall()  
+                dados = []
+                for row in result:
+                    list_row = list(row)
+                    dados.append(list_row)
 
-    # Mostra livros emprestados ao professor
-    cursor.execute("""
-        SELECT E.id_emprestimo, L.titulo, L.autor
-        FROM Emprestimo E
-        JOIN Livro L ON E.id_livro = L.id_livro
-        WHERE E.id_user = %s;
-    """, (usuario_logado["id_user"],))
-    emprestimos = cursor.fetchall()
+                connector.commit()  
+                if not dados:
+                    print('Não há livros com você!')
+                    sleep(2)
+                    print('\nMessage: Voltando para a home page...')
+                    loadingAnimation()
+                    home_professor(user)
+                else:
+                    headers = ["ID", "ID Usuário", "Usuário", "ID Livro", "Livro"]
+                    print(tabulate(dados, headers=headers, tablefmt="fancy_grid"))  
+                    print('\n< 1 > Devolver livro')
+                    print('< 2 > Voltar para a home page')
+                    opc = int(input('-> [ ]\b\b'))  
+                    if opc == 1:
+                        id_book = int(input('\nDigite o id do livro que você deseja devolver: '))
+                        id_book_tupla = (id_book,)  
+                        loadingAnimation()
+                        system('clear')
+                        alert = input('Alert: Certeza que deseja devolver este livro? (s/n): ') 
+                        if alert == 's' or alert == 'S':
+                            delete_livro_guarda_query = """
+                            delete from Guarda where id_book = %s 
+                            """
+                            cursor.execute(delete_livro_guarda_query, id_book_tupla)
+                            livro_disponivel_query = """
+                            update Livro set _status = 1 where id_book = %s
+                            """
+                            cursor.execute(livro_disponivel_query, id_book_tupla)
+                            connector.commit()  
+                            loadingAnimation()
+                            system('clear')
+                            print('Message: Livro devolvido com sucesso!')
+                            loadingAnimation()
+                            system('clear')
+                            print('Message: Voltando para a página de devolução de livros...')
+                            loadingAnimation()
+                            devolver_livro(user, user)
+                        else:
+                            loadingAnimation()
+                            system('clear')
+                            print('Message: Voltando para a página de devolução de livros...')
+                            loadingAnimation()
+                            devolver_livro(user, user)   
+                    elif opc == 2:
+                        loadingAnimation()
+                        system('clear')
+                        print('Message: Voltando para a home page...')
+                        loadingAnimation()
+                        home_professor(user)
 
-    if not emprestimos:
-        print("Você não possui livros emprestados.")
-    else:
-        print("\nSeus livros emprestados:")
-        for emp in emprestimos:
-            print(f"{emp['id_emprestimo']} - {emp['titulo']} ({emp['autor']})")
-
-        try:
-            id_emprestimo = int(input("\nDigite o ID do empréstimo que deseja devolver: "))
-
-            cursor.execute("""
-                SELECT id_livro FROM Emprestimo WHERE id_emprestimo = %s AND id_user = %s;
-            """, (id_emprestimo, usuario_logado["id_user"]))
-            registro = cursor.fetchone()
-
-            if registro:
-                cursor.execute("UPDATE Livro SET status = 'Disponível' WHERE id_livro = %s;", (registro["id_livro"],))
-                cursor.execute("DELETE FROM Emprestimo WHERE id_emprestimo = %s;", (id_emprestimo,))
-                conexao.commit()
-                print(" Livro devolvido com sucesso!")
-            else:
-                print("ID inválido ou empréstimo não encontrado.")
-        except ValueError:
-            print("Entrada inválida. Digite apenas números.")
-
-    cursor.close()
-    conexao.close()
-    time.sleep(2)
+    except Error as e:
+        print(f'Detalhes do erro no contexto do banco de dados:\n{e}\n\n')  
 
 
 # ==========================================
 #  HOME PAGE DO PROFESSOR
 # ==========================================
 def home_professor(usuario_logado):
-    while True:
-        print("\n==============================")
-        print(" HOME PAGE - PROFESSOR")
-        print("==============================")
-        print("1️⃣ Solicitar Livros")
-        print("2️⃣ Ver Lista de Livros Disponíveis")
-        print("3️⃣ Devolver Livro")
-        print("0️⃣ Sair")
-        print("==============================")
+    user = usuario_logado
+    system('clear')
+    print("===== HOME PAGE - PROFESSOR =====")
+    linha(60, '-')
+    print("< 1 > Solicitar Livros")
+    print("< 2 > Ver Lista de Livros Disponíveis")
+    print("< 3 > Devolver Livro")
+    print("< 0 > Sair")
+    opcao = input("-> [ ]\b\b")
+    loadingAnimation()
+    if opcao == "1":
+        solicitar_livro(usuario_logado, user)
+    elif opcao == "2":
+        ver_livros_disponiveis(usuario_logado, user)
+    elif opcao == "3":
+        devolver_livro(usuario_logado, user)
+    elif opcao == "0":
+        system('clear')
+        print("Saindo da Home Page...")
+        loadingAnimation()
+    else:
+        print(" Opção inválida. Tente novamente.")
+        sleep(1)
+    pass
 
-        opcao = input("Escolha uma opção: ")
-
-        if opcao == "1":
-            solicitar_livro(usuario_logado)
-        elif opcao == "2":
-            ver_livros_disponiveis(usuario_logado)
-        elif opcao == "3":
-            devolver_livro(usuario_logado)
-        elif opcao == "0":
-            print("Saindo da Home Page...")
-            time.sleep(1)
-            break
-        else:
-            print("Opção inválida. Tente novamente.")
-            time.sleep(1)
-
-
-# ==========================================
-#  Simulação de Login
-# ==========================================
-usuario_logado = {
-    "id_user": 2,
-    "nome": "Professor Carlos",
-    "perfil": "Professor"
-}
-
-# Se o login for de um professor, vai direto para a Home Page
-if usuario_logado["perfil"] == "Professor":
-    home_professor(usuario_logado)
-else:
-    print("Acesso negado. Apenas professores podem acessar esta página.")
+if __name__ == "__main__":
+    home_professor()

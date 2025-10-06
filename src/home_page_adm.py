@@ -1,6 +1,6 @@
 from os import system
-from linha_function import linha
-from loading_animation import loadingAnimation
+from src.linha_function import linha
+from src.loadgin_animation import loadingAnimation
 from mysql.connector import connect, Error
 import time
 import re
@@ -9,13 +9,14 @@ from tabulate import tabulate
 
 def adm_home_page():
     system('clear')
-    print('===== HOME PAGE ADM =====')
+    print('===== HOME PAGE - ADM =====')
     linha(50, '-')
     print('< 1 > Responder Solicitações')
     print('< 2 > Adicionar livros ao sistema')
     print('< 3 > Remover livros do sistema')
     print('< 4 > Ver lista de livros cadastrados no sistema')
     print('< 5 > Ver lista de livros disponíveis')
+    print('< 6 > Sair')
     opc = int(input('-> [ ]\b\b'))
     loadingAnimation()
     return  opc
@@ -33,6 +34,10 @@ def switch_case(opc):
             seeBooksInSistem()
         case 5:
             showBooks1()
+        case 6:
+            system('clear')
+            print('Message: Saindo...')
+            loadingAnimation()
         case _:
             print('Opção inválida!\nTente outra vez...')
             loadingAnimation()
@@ -65,6 +70,7 @@ def opc_more_book(string):
         print('Opção inválida, tente novamente...')
         loadingAnimation()
         opc_more_book(string_copy)
+    pass
 
 
 
@@ -201,6 +207,8 @@ def responseRequests():
                             switch_case(adm_home_page())
     except Error as e:
         print(f'Detalhes do erro: \n{e}\n\n')
+    
+    pass
 
 
 # RESPONDER SOLICITAÇÕES ================================
@@ -252,6 +260,8 @@ def addBook():
     loadingAnimation()
     
     opc_more_book('adicionar')
+
+    pass
 # ADICIONAR LIVROS ====================================
 
 # REMOVER LIVROS ====================================
@@ -357,6 +367,7 @@ def removeBook():
         print('Erro de conexão com o Banco de dados')
         print(f'Detalhe do erro:\n{e}\n\n')
 
+    pass
 
 
 #  REMOVER LIVROS ====================================
@@ -446,6 +457,8 @@ def seeBooksInSistem():
     except Error as e:
         print(f'Detalhes do erro: {e}')
 
+    pass
+
 # VER LISTA DE LIRVOS CADASTRADOS NO SISTEMA =======================================
 
 
@@ -498,8 +511,10 @@ def showBooks1():
     except Error as e:
         print(f'Detalhes do erro: {e}')
 
+    pass
+
 
 # VER LISTA DE LIVROS DISPONÍVEIS ==================================================
 
-
-switch_case(adm_home_page())
+if __name__ == "__main__":
+    switch_case(adm_home_page())

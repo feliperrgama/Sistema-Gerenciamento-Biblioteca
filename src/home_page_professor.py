@@ -8,10 +8,10 @@ def solicitar_livro(usuario_logado):
     print("\n=== SOLICITAR LIVRO ===")
 
     conexao = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="Asm693693.",  
-        database="Biblioteca20"
+        host="",
+        user="",
+        password="",  
+        database=""
     )
     cursor = conexao.cursor(dictionary=True)
 

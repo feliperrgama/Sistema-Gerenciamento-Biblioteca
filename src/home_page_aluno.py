@@ -9,9 +9,9 @@ def solicitar_livro(usuario_logado):
 
     conexao = mysql.connector.connect(
         host="localhost",
-        user="root",
-        password="Asm693693.",
-        database="Biblioteca20"
+        user="",
+        password="",
+        database=""
     )
     cursor = conexao.cursor(dictionary=True)
 

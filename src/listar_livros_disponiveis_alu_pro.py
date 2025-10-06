@@ -14,9 +14,9 @@ def listar_livros_disponiveis(usuario_logado):
     try:
         # ⚙️ Conexão com o banco de dados
         conexao = mysql.connector.connect(
-            host="localhost",
-            user="root",           
-            password="Asm693693.",  
+            host="",
+            user="",           
+            password="",  
             database="Biblioteca20"
         )
 

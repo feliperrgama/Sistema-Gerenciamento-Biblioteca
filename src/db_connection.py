@@ -6,11 +6,10 @@ def db_connection():
             host="localhost",
             user="root",        
             password="Mavaba123456@",
-            database="biblioteca20"
+            database="Biblioteca20"
         )
 
         if conexao.is_connected():
-            print("Conectado com sucesso!")
             return conexao
 
     except mysql.connector.Error as err:

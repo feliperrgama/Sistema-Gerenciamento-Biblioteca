@@ -22,7 +22,7 @@ def login():
 def register():
     return render_template('/src-front/register.html')
 
-@app.route('/registrar_user')
+@app.route('/registrar_user', methods = ['POST'])
 def registrar():
     data = request.get_json()
 
@@ -49,36 +49,30 @@ def registrar():
             """
             with connector.cursor() as cursor:
                 cursor.execute(register_user_query, (username, email, password))
+
+                connector.commit()
+
+                cursor.execute("SELECT LAST_INSERT_ID()")
+                id = cursor.fetchone()[0]
                 
-                if select == 1:
-                    select_user_atual_query = """
-                    select id_user from Usuario where username = %s and email = %s and password = %s
-                    """
+                if select == '1':
                     register_aluno_query = """
                     insert into Aluno (id_user) values (%s) 
                     """
-
-                    cursor.execute(select_user_atual_query, (username, email, password))
-                    result = cursor.fetchone()
-
-                    cursor.execute(register_aluno_query, result)
-
-                    cursor.commit()
-                elif select == 2:
-                    select_user_atual_query = """
-                    select id_user from Usuario where username = %s and email = %s and password = %s
-                    """
+                    cursor.execute(register_aluno_query, (id, ))
+                elif select == '2':
                     register_prof_query = """
-                    insert into Aluno (id_user) values (%s) 
+                    insert into Professor (id_user) values (%s) 
                     """
+                    cursor.execute(register_prof_query, (id, ))
+                
+                connector.commit()
 
-                    cursor.execute(select_user_atual_query, (username, email, password))
-                    result = cursor.fetchone()
-
-                    cursor.execute(register_prof_query, result)
+                return jsonify({"message": "Usuário cadastrado com sucesso"}), 201
 
     except Error as err:
         print(f'Erro em relação ao banco de dados:\n{err}\n\n')
+        return jsonify({"message": "Erro interno"})
 
 @app.route('/usuarios/<nome_do_usuario>')
 def users(nome_do_usuario):

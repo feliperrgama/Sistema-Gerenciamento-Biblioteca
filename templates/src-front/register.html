@@ -251,6 +251,10 @@
                         p.textContent = "Senhas diferentes!"
                     }
 
+                    alert("Usuário cadastrado")
+
+                    window.location.assign(`${API_URL_BASE}/login`)
+
                 })
 
                 eye_password.addEventListener("click", () => {

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGB WELCOME</title>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 500px;
+            /* background-color: aqua; */
+        }
+
+        main h1 {
+            margin-top: 40px;
+            margin-bottom: 10px;
+        }
+
+        div {
+            /* background-color: blue; */
+            height: 100px;
+            margin-top: 100px;
+            display: flex;
+            align-items: center;
+            width: 400px;
+            justify-content: space-between;
+        }
+
+        button {
+            height: 60px;
+            width: 180px;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .login-btn {
+            background-image: linear-gradient(to right, rgb(3, 3, 71) 0%, rgb(3, 3, 71) 50%, rgb(231, 231, 231) 50%, rgb(231, 231, 231) 100%);
+            background-size: 220% 100%;
+            background-position: 0% 0%;
+            ;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.7s ease;
+            color: white;
+        }
+
+        .register-btn {
+            background-image: linear-gradient(to left, rgb(231, 231, 231) 0%, rgb(231, 231, 231) 50%, rgb(3, 3, 71) 50%, rgb(3, 3, 71) 100%);
+            background-size: 220%, 100%;
+            background-position: 0% 0%;
+            position: relative;
+            overflow: hidden;
+            color: white;
+            transition: all 0.7s ease;
+        }
+
+        .login-btn:hover {
+            background-position: -90% 0%;
+            color: rgb(3, 3, 71);
+
+        }
+
+        .register-btn:hover {
+            background-position: 100% 0%;
+            color: rgb(3, 3, 71);
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Bem vindo ao SGB</h1>
+        <p><em>Faça um excelente gerenciamento de biblioteca atravéz de uma interface simples</em></p>
+
+        <div>
+            <button class="login-btn">Login</button>
+            <button class="register-btn">Casdastro</button>
+        </div>
+    </main>
+
+
+    <script>
+        let login_btn = document.querySelector(".login-btn")
+        let register_btn = document.querySelector(".register-btn")
+        const API_URL_BASE = 'http://127.0.0.1:5000'
+
+        login_btn.addEventListener('click', () => {
+            window.location.assign(`${API_URL_BASE}/login`)
+        })
+
+        register_btn.addEventListener('click', () => {
+            window.location.assign(`${API_URL_BASE}/register`)
+        })
+    </script>
+</body>
+
+</html>

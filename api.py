@@ -14,13 +14,21 @@ app = Flask(__name__) # Recomensação da documentação
 def homepage():
     return render_template("index.html")
 
+
+
+
 @app.route('/login')
 def login():
     return render_template("/src-front/login.html")
 
+
+
+
 @app.route('/register')
 def register():
     return render_template('/src-front/register.html')
+
+
 
 @app.route('/registrar_user', methods = ['POST'])
 def registrar():
@@ -74,9 +82,16 @@ def registrar():
         print(f'Erro em relação ao banco de dados:\n{err}\n\n')
         return jsonify({"message": "Erro interno"})
 
+
+
+
 @app.route('/usuarios/<nome_do_usuario>')
 def users(nome_do_usuario):
     return render_template("/src-front/home_page_user.html", nome_do_usuario=nome_do_usuario)
+    
+
+
+
 
 @app.route('/<string:nome>')
 def error(nome):

@@ -207,7 +207,6 @@
                 const confirm_input = document.querySelector("#confirm")
                 const form = document.querySelector("form")
                 const select_input = document.querySelector("select")
-                const p = document.querySelector("#p")
                 const eye_password = document.querySelector(".eye_password")
                 const eye_confirm = document.querySelector(".eye_confirm")
 
@@ -221,6 +220,9 @@
                     const password = password_input.value
                     const confirm = confirm_input.value
                     const select = select_input.value
+                    const p = document.querySelector("#p")
+
+                    console.log(`Comparando as senhas: ${typeof (password)} | ${typeof (confirm)}`)
 
                     if (confirm === password) {
                         var register_data = {
@@ -246,14 +248,13 @@
                             .catch(error => {
                                 console.log('[LOG] Erro ao registrar!', error)
                             })
+                        alert("Usuário cadastrado com sucesso")
+                        window.location.assign(`${API_URL_BASE}/login`)
 
-                    } else {
+                    } else if (password !== confirm) {
                         p.textContent = "Senhas diferentes!"
                     }
 
-                    alert("Usuário cadastrado")
-
-                    window.location.assign(`${API_URL_BASE}/login`)
 
                 })
 

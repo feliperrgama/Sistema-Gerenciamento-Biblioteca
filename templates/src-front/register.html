@@ -211,6 +211,8 @@
                 const eye_password = document.querySelector(".eye_password")
                 const eye_confirm = document.querySelector(".eye_confirm")
 
+                const API_URL_BASE = "http://127.0.0.1:5000"
+
                 form.addEventListener("submit", (event) => {
                     event.preventDefault()
 
@@ -228,11 +230,22 @@
                             select: select
                         }
 
-                        p.textContent = "Ola"
+                        var json = JSON.stringify(register_data)
 
-                        return register_data
-
-                        console.log(register_data)
+                        fetch(`${API_URL_BASE}/registrar_user`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: json
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('[LOG] Sucesso', data)
+                            })
+                            .catch(error => {
+                                console.log('[LOG] Erro ao registrar!', error)
+                            })
 
                     } else {
                         p.textContent = "Senhas diferentes!"
